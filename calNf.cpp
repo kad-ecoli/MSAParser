@@ -1,13 +1,20 @@
 const char* docstring=""
-"calNf seq.aln 0.8 0\n"
+"calNf seq.aln 0.8\n"
 "    calculate Nf, number of effective sequence defined in gremlin,\n"
 "    using 0.8 (default) sequence identity cutoff.\n"
 "\n"
+"calNf seq.aln 0.8 0\n"
 "    The third optional argument is normalization methods:\n"
 "       0 - normalized by L^0.5 (default)\n"
 "       1 - normalized by L\n"
 "       2 - do not normalize\n"
-"      10 - calculate seqID by number of nongap positions\n";
+"      10 - calculate seqID by number of nongap positions\n"
+"      20 - do not calculate seqID (overwrite seqID cutoff as 1)\n"
+"\n"
+"calNf seq.aln 0.8 0 128\n"
+"    The fourth optional argument is target Nf. Stop Nf calculation if\n"
+"    it is already greater than target Nf. default is 0 (no target Nf)\n"
+;
 
 #include <iostream>
 #include <vector>
@@ -20,7 +27,8 @@ using namespace std;
 
 string aa_list="ACDEFGHIKLMNPQRSTVWY";
 
-float calNf(const char *filename, float id_cut=0.8, int norm=0)
+float calNf(const char *filename, float id_cut=0.8, int norm=0,
+    float target_Nf=0)
 {
     int L=0; // alignment length
     int i,n,m; // position, sequence index, sequence index
@@ -44,7 +52,7 @@ float calNf(const char *filename, float id_cut=0.8, int norm=0)
             L=sequence.length();
             is_not_gap_vec.assign(L,0);
         }
-        if (norm_by_ali)
+        if (norm_by_ali==1)
         {
             cov_vec.push_back(0);
             for (i=0;i<L;i++)
@@ -58,9 +66,9 @@ float calNf(const char *filename, float id_cut=0.8, int norm=0)
                     is_not_gap_vec[i]=0;
             }
             cov_vec[cov_vec.size()-1]/=(1.*L);
+            is_not_gap_mat.push_back(is_not_gap_vec);
         }
         aln.push_back(sequence);
-        is_not_gap_mat.push_back(is_not_gap_vec);
         if (sequence.size()!=L)
         {
             cerr<<"ERROR! length not match for sequence "<<aln.size();
@@ -70,11 +78,26 @@ float calNf(const char *filename, float id_cut=0.8, int norm=0)
     fp.close();
     is_not_gap_vec.clear();
 
-    /* compute seqID */
+    /* normalize target Nf */
+    if (norm==0) target_Nf*=sqrt(L);
+    else if (norm==1) target_Nf*=L;
+
+    /* for simple seq number counting */
     int seq_num=aln.size();
-    vector<float> seq_weight_vec(seq_num,0);
-    vector<vector<float> > seqID_mat(seq_num,seq_weight_vec);
-    for (m=0;m<seq_num-1;m++)
+    if (norm_by_ali==2)
+    {
+        if (norm==0) return 1.*seq_num/sqrt(L);
+        else if (norm==1) return 1.*seq_num/L;
+        else return seq_num;
+    }
+
+    /* compute seqID */
+    float Nf=0;
+    float inv_seq_weight=0;
+    vector<float> seqID_vec(seq_num,0);
+    vector<vector<float> > seqID_mat(seq_num,seqID_vec);
+    seqID_vec.clear();
+    for (m=0;m<seq_num;m++)
     {
         for (n=m+1;n<seq_num;n++)
         {
@@ -99,18 +122,12 @@ float calNf(const char *filename, float id_cut=0.8, int norm=0)
                 }
             }
         }
-    }
 
-    /* compute Nf */
-    float Nf=0;
-    for (m=0;m<seq_num;m++)
-    {
+        inv_seq_weight=0;
         for (n=0;n<seq_num;n++)
-        {
-            seq_weight_vec[m]+=(m==n||seqID_mat[m][n]>id_cut);
-        }
-        seq_weight_vec[m]=1./seq_weight_vec[m];
-        Nf+=seq_weight_vec[m];
+            inv_seq_weight+=(m==n||seqID_mat[m][n]>id_cut);
+        Nf+=1./inv_seq_weight;
+        if (target_Nf>0 && Nf>target_Nf) break;
     }
 
     /* normalize Nf */
@@ -125,6 +142,7 @@ int main(int argc, char **argv)
     /* parse commad line argument */
     float id_cut=0.8; // defined by gremlin
     int norm=0; // 0 - L^0.5, 1 - L, 2 - no normalize
+    float target_Nf=0;
     if(argc<2)
     {
         cerr<<docstring;
@@ -132,6 +150,7 @@ int main(int argc, char **argv)
     }
     if (argc>2) id_cut=atof(argv[2]);
     if (argc>3) norm=atoi(argv[3]);
-    cout<<calNf(argv[1],id_cut,norm)<<endl;
+    if (argc>4) target_Nf=atof(argv[4]);
+    cout<<calNf(argv[1],id_cut,norm,target_Nf)<<endl;
     return 0;
 }
