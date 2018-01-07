@@ -1,6 +1,17 @@
+'''
+utilities for parsing multiple sequence alignments
+
+note that sequence identity and coverage are expressed in the scale of
+zero to one, and note the same as percentage sequence identity and 
+coverage percentage used by hhfilter.
+'''
+
 fasta2aln      # convert aligned fasta to PSICOV format alignment
 fastaCov       # remove sequence fragments
 realignMSA     # realign the second alignment to the first one, based on 
                # match state of the first alignment
 rmRedundantSeq # remove redundant sequences and sequence fragments
+               # rmRedundantSeq is more stringent than hhfilter in that
+               # it calculates seqID of non-gapped positions instead of
+               # for full query sequence length.
 trimMSA        # remove positions > symfrac gaps to lower case
