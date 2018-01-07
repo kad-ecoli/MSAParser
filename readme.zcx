@@ -2,7 +2,7 @@
 utilities for parsing multiple sequence alignments
 
 note that sequence identity and coverage are expressed in the scale of
-zero to one, and note the same as percentage sequence identity and 
+zero to one, and NOT the same as percentage sequence identity and 
 coverage percentage used by hhfilter.
 '''
 
