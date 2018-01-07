@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-O3
 LDFLAGS=-static
 
-prog=trimMSA rmRedundantSeq realignMSA fasta2aln fastaCov
+prog=trimMSA rmRedundantSeq realignMSA fasta2aln fastaCov calNf
 
 all: ${prog}
 
@@ -19,6 +19,9 @@ fasta2aln: fasta2aln.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
 fastaCov: fastaCov.cpp
+	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
+
+calNf: calNf.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
 install: ${prog}
