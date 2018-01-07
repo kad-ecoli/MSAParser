@@ -34,7 +34,7 @@ float calNf(const char *filename, float id_cut=0.8, int norm=0,
     int i,n,m; // position, sequence index, sequence index
     vector <int> is_not_gap_vec; // if a positions is an amino acid 
     vector<vector<int> > is_not_gap_mat; // if a position is an amino acid
-    vector<float> cov_vec;  // coverage for each sequence
+    vector<int> Lali_vec;  // length of aligned residues for each sequence
     string sequence;
     vector <string> aln;
     int norm_by_ali=(norm/10);
@@ -54,18 +54,17 @@ float calNf(const char *filename, float id_cut=0.8, int norm=0,
         }
         if (norm_by_ali==1)
         {
-            cov_vec.push_back(0);
+            Lali_vec.push_back(0);
             for (i=0;i<L;i++)
             {
                 if (aa_list.find(sequence[i])!=string::npos)
                 {
                     is_not_gap_vec[i]=1;
-                    cov_vec[cov_vec.size()-1]+=1;
+                    Lali_vec[Lali_vec.size()-1]+=1;
                 }
                 else
                     is_not_gap_vec[i]=0;
             }
-            cov_vec[cov_vec.size()-1]/=(1.*L);
             is_not_gap_mat.push_back(is_not_gap_vec);
         }
         aln.push_back(sequence);
@@ -93,40 +92,35 @@ float calNf(const char *filename, float id_cut=0.8, int norm=0,
 
     /* compute seqID */
     float Nf=0;
-    float inv_seq_weight=0;
-    vector<float> seqID_vec(seq_num,0);
-    vector<vector<float> > seqID_mat(seq_num,seqID_vec);
-    seqID_vec.clear();
+    int Liden=0;
+    vector<int> inv_seq_weight_vec(seq_num,1);
     for (m=0;m<seq_num;m++)
     {
         for (n=m+1;n<seq_num;n++)
         {
+            Liden=0;
             for (i=0;i<L;i++)
             {
-                seqID_mat[m][n]+=(aln[m][i]==aln[n][i] && (norm_by_ali==0
+                Liden+=(aln[m][i]==aln[n][i] && (norm_by_ali==0
                     ||(is_not_gap_mat[m][i]*is_not_gap_mat[n][i])));
             }
 
             if (norm_by_ali==0)
             {
-                seqID_mat[m][n]/=(1.*L);
-                seqID_mat[n][m]=seqID_mat[m][n];
+                inv_seq_weight_vec[m]+=(1.*Liden/L > id_cut);
+                inv_seq_weight_vec[n]+=(1.*Liden/L > id_cut);
             }
             else
             {
-                seqID_mat[n][m]=seqID_mat[m][n];
-                if (cov_vec[m]*cov_vec[n]>0)
+                if (Lali_vec[m]*Lali_vec[n]>0)
                 {
-                    seqID_mat[m][n]/=L*cov_vec[m];
-                    seqID_mat[n][m]/=L*cov_vec[n];
+                    inv_seq_weight_vec[m]+=(1.*Liden/Lali_vec[m] > id_cut);
+                    inv_seq_weight_vec[n]+=(1.*Liden/Lali_vec[n] > id_cut);
                 }
             }
         }
 
-        inv_seq_weight=0;
-        for (n=0;n<seq_num;n++)
-            inv_seq_weight+=(m==n||seqID_mat[m][n]>id_cut);
-        Nf+=1./inv_seq_weight;
+        Nf+=1./inv_seq_weight_vec[m];
         if (target_Nf>0 && Nf>target_Nf) break;
     }
 
