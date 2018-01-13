@@ -15,3 +15,4 @@ rmRedundantSeq # remove redundant sequences and sequence fragments
                # it calculates seqID of non-gapped positions instead of
                # for full query sequence length.
 trimMSA        # remove positions > symfrac gaps to lower case
+calNf          # calculate Nf using GREMLIN definition
