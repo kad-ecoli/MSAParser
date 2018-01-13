@@ -110,13 +110,10 @@ float calNf(const char *filename, float id_cut=0.8, int norm=0,
                 inv_seq_weight_vec[m]+=(1.*Liden/L > id_cut);
                 inv_seq_weight_vec[n]+=(1.*Liden/L > id_cut);
             }
-            else
+            else if (Lali_vec[m]*Lali_vec[n]>0)
             {
-                if (Lali_vec[m]*Lali_vec[n]>0)
-                {
-                    inv_seq_weight_vec[m]+=(1.*Liden/Lali_vec[m] > id_cut);
-                    inv_seq_weight_vec[n]+=(1.*Liden/Lali_vec[n] > id_cut);
-                }
+                inv_seq_weight_vec[m]+=(1.*Liden/Lali_vec[m] > id_cut);
+                inv_seq_weight_vec[n]+=(1.*Liden/Lali_vec[n] > id_cut);
             }
         }
 
