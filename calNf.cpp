@@ -27,7 +27,7 @@ using namespace std;
 
 string aa_list="ACDEFGHIKLMNPQRSTVWY";
 
-float calNf(const char *filename, float id_cut=0.8, int norm=0,
+float calNf(const string infile="-", float id_cut=0.8, int norm=0,
     float target_Nf=0)
 {
     int L=0; // alignment length
@@ -42,10 +42,12 @@ float calNf(const char *filename, float id_cut=0.8, int norm=0,
 
     /* read aln file */
     ifstream fp;
-    fp.open(filename,ios::in);
-    while (fp.good())
+    if (infile!="-") fp.open(infile.c_str(),ios::in);
+    while ((infile!="-")?fp.good():cin.good())
     {
-        getline(fp,sequence);
+        if (infile!="-") getline(fp,sequence);
+        else getline(cin,sequence);
+
         if (sequence.length()==0) continue;
         if (L==0)
         {
@@ -139,9 +141,10 @@ int main(int argc, char **argv)
         cerr<<docstring;
         return 0;
     }
+    string infile=argv[1];
     if (argc>2) id_cut=atof(argv[2]);
     if (argc>3) norm=atoi(argv[3]);
     if (argc>4) target_Nf=atof(argv[4]);
-    cout<<calNf(argv[1],id_cut,norm,target_Nf)<<endl;
+    cout<<calNf(infile,id_cut,norm,target_Nf)<<endl;
     return 0;
 }
