@@ -73,6 +73,7 @@ int main(int argc, char **argv)
         return 0;
     }
     float cov_cut=atof(argv[1]);
+    if (cov_cut>1) cov_cut/=100.;
     string infile=(argc<=2)?"-":argv[2];
     string outfile=(argc<=3)?"-":argv[3];
     fastaCov(cov_cut,infile,outfile);

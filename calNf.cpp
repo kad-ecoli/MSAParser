@@ -176,6 +176,7 @@ int main(int argc, char **argv)
     }
     string infile=argv[1];
     if (argc>2) id_cut=atof(argv[2]);
+    if (id_cut>1) id_cut/=100.;
     if (argc>3) norm=atoi(argv[3]);
     if (argc>4) target_Nf=atof(argv[4]);
     if (argc>5) filter_aln_only=atoi(argv[5]);

@@ -194,6 +194,8 @@ int main(int argc, char **argv)
     }
     float id_cut=atof(argv[1]);
     float cov_cut=atof(argv[2]);
+    if (id_cut>1) id_cut/=100.;
+    if (cov_cut>1) cov_cut/=100.;
     int nseqs;
     vector <string> query_aln;
     vector <string> aln;

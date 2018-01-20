@@ -1,9 +1,9 @@
 '''
 utilities for parsing multiple sequence alignments
 
-note that sequence identity and coverage are expressed in the scale of
-zero to one, and NOT the same as percentage sequence identity and 
-coverage percentage used by hhfilter.
+note that sequence identity and coverage are expressed either in the scale of
+zero to one, or, in the case where it is greater than 1, in percentage sequence 
+identity and coverage percentage used by hhfilter.
 '''
 
 fasta2aln      # convert aligned fasta to PSICOV format alignment
