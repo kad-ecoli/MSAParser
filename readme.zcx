@@ -1,18 +1,19 @@
 '''
 utilities for parsing multiple sequence alignments
 
-note that sequence identity and coverage are expressed either in the scale of
-zero to one, or, in the case where it is greater than 1, in percentage sequence 
-identity and coverage percentage used by hhfilter.
+note that sequence identity and coverage are expressed either in the scale
+of zero to one, or, in the case where it is greater than 1, in percentage
+sequence identity and percentage coverage.
 '''
 
-fasta2aln      # convert aligned fasta to PSICOV format alignment
-fastaCov       # remove sequence fragments
-realignMSA     # realign the second alignment to the first one, based on 
-               # match state of the first alignment
-rmRedundantSeq # remove redundant sequences and sequence fragments
-               # rmRedundantSeq is more stringent than hhfilter in that
-               # it calculates seqID of non-gapped positions instead of
-               # for full query sequence length.
-trimMSA        # remove positions > symfrac gaps to lower case
-calNf          # calculate Nf using GREMLIN definition
+fasta2aln        # convert aligned fasta to PSICOV format alignment
+fastaCov         # remove sequence fragments
+realignMSA       # realign the second alignment to the first one, based on
+                 # match state of the first alignment
+rmRedundantSeq   # remove redundant sequences and sequence fragments
+                 # rmRedundantSeq is more stringent than hhfilter in that
+                 # it calculates seqID of non-gapped positions instead of
+                 # for full query sequence length.
+trimMSA          # remove positions with too many gaps
+cleanFastaHeader # simplify sequence name in fasta file
+calNf            # calculate Nf using GREMLIN definition
