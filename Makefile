@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-O3
 LDFLAGS=-static
 
-prog=trimMSA rmRedundantSeq realignMSA fasta2aln fastaCov calNf cleanFastaHeader
+prog=trimMSA rmRedundantSeq realignMSA fasta2aln fastaCov calNf cleanFastaHeader AlnAaProb
 
 all: ${prog}
 
@@ -25,6 +25,9 @@ calNf: calNf.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
 cleanFastaHeader: cleanFastaHeader.cpp
+	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
+
+AlnAaProb: AlnAaProb.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
 install: ${prog}

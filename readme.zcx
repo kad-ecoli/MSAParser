@@ -17,3 +17,4 @@ rmRedundantSeq   # remove redundant sequences and sequence fragments
 trimMSA          # remove positions with too many gaps
 cleanFastaHeader # simplify sequence name in fasta file
 calNf            # calculate Nf using GREMLIN definition
+AlnAaProb        # calculate AA prob for each position
