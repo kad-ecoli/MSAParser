@@ -155,7 +155,7 @@ int main(int argc, char **argv)
             <<setiosflags(ios::fixed)<<setprecision(5)<<AaProb_mat[i][a];
         cout<<endl;
     }
-    cout<<"total";
+    cout<<"mean";
     for (a=0;a<aa_list.length();a++) cout<<'\t'
          <<setiosflags(ios::fixed)<<setprecision(5)<<AaProb_vec[a];
     cout<<endl;
