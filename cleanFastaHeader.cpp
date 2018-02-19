@@ -39,7 +39,7 @@ int cleanFastaHeader(const string & infile,
                 fp_outheader<<seq_idx<<'\t'<<line.substr(1)<<endl;
             else cout<<seq_idx<<'\t'<<line.substr(1)<<endl;
         }
-        else
+        else if (line.length())
         {
             if (outfasta!="-") fp_outfasta<<line<<endl;
             else cout<<line<<endl;
