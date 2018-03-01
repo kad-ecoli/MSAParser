@@ -42,6 +42,8 @@ float calNf(const string infile="-", float id_cut=0.8, int norm=0,
     vector<vector<int> > is_not_gap_mat; // if a position is an amino acid
     vector<int> Lali_vec;  // length of aligned residues for each sequence
     int Lali=0,Liden=0;
+    int Ldiff=0,Ldiff_m=0,Ldiff_n=0;
+    int max_Ldiff=0,max_Ldiff_m=0,max_Ldiff_n=0;
     string sequence;
     vector <string> aln;
     int norm_by_ali=(norm/10);
@@ -60,6 +62,8 @@ float calNf(const string infile="-", float id_cut=0.8, int norm=0,
         if (L==0)
         {
             L=sequence.length();
+            /* max num of different residues for two seq to be considered homolog */
+            max_Ldiff=max_Ldiff_m=max_Ldiff_n=L*(1.-id_cut);
             is_not_gap_vec.assign(L,0);
             /* normalize target Nf */
             if (norm==0) target_Nf*=sqrt(L);
@@ -129,25 +133,44 @@ float calNf(const string infile="-", float id_cut=0.8, int norm=0,
     vector<int> inv_seq_weight_vec(seq_num,1);
     for (m=0;m<seq_num;m++)
     {
+        if (norm_by_ali) max_Ldiff_m=Lali_vec[m]*(1.-id_cut);
         for (n=m+1;n<seq_num;n++)
         {
-            Liden=0;
+            //Liden=0;
+            Ldiff=Ldiff_m=Ldiff_n=0;
+            if (norm_by_ali) max_Ldiff_n=Lali_vec[n]*(1.-id_cut);
+
             for (i=0;i<L;i++)
             {
-                Liden+=(aln[m][i]==aln[n][i] && (norm_by_ali==0
-                    ||(is_not_gap_mat[m][i]*is_not_gap_mat[n][i])));
+                if (aln[m][i]==aln[n][i]) continue;
+                if (norm_by_ali==0)
+                {
+                    Ldiff++;
+                    if (Ldiff>max_Ldiff) break;
+                }
+                else
+                {
+                    Ldiff_m+=is_not_gap_mat[m][i];
+                    Ldiff_n+=is_not_gap_mat[n][i];
+                    if (Ldiff_m>max_Ldiff_m && Ldiff_n>max_Ldiff_n) break;
+                }
+                //Liden+=(aln[m][i]==aln[n][i] && (norm_by_ali==0
+                    //||(is_not_gap_mat[m][i]*is_not_gap_mat[n][i])));
             }
-
-            if (norm_by_ali==0)
-            {
-                inv_seq_weight_vec[m]+=(1.*Liden/L > id_cut);
-                inv_seq_weight_vec[n]+=(1.*Liden/L > id_cut);
-            }
-            else if (Lali_vec[m]*Lali_vec[n]>0)
-            {
-                inv_seq_weight_vec[m]+=(1.*Liden/Lali_vec[m] > id_cut);
-                inv_seq_weight_vec[n]+=(1.*Liden/Lali_vec[n] > id_cut);
-            }
+            if (norm_by_ali==0) Ldiff_m=Ldiff_n=Ldiff;
+            
+            inv_seq_weight_vec[m]+=(Ldiff_m<=max_Ldiff_m);
+            inv_seq_weight_vec[n]+=(Ldiff_n<=max_Ldiff_n);
+            //if (norm_by_ali==0)
+            //{
+                //inv_seq_weight_vec[m]+=(1.*Liden/L > id_cut);
+                //inv_seq_weight_vec[n]+=(1.*Liden/L > id_cut);
+            //}
+            //else if (Lali_vec[m]*Lali_vec[n]>0)
+            //{
+                //inv_seq_weight_vec[m]+=(1.*Liden/Lali_vec[m] > id_cut);
+                //inv_seq_weight_vec[n]+=(1.*Liden/Lali_vec[n] > id_cut);
+            //}
         }
 
         Nf+=1./inv_seq_weight_vec[m];
