@@ -9,4 +9,4 @@ rmRedundantSeq
 trimMSA
 calNf
 cleanFastaHeader
-Aln2AaProb
+AlnAaProb
