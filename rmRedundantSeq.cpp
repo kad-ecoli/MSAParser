@@ -24,8 +24,9 @@ int parse_single_aln(const char *filename, vector <string> & aln,
     const float id_cut, const float cov_cut)
 {
     int L=0; // alignment length
+    int Ldiff=0,maxLdiff=0; // length of different positions
     int i,n; // position, sequence index
-    int cov1,cov2; // number of non-gap positions
+    int Lali; // number of non-gap positions
     float seqID1,seqID2; // seqID with previous sequences
     vector <int> is_not_gap_vec; // if a positions is an amino acid 
     vector<vector<int> > is_not_gap_mat; // if a position is an amino acid
@@ -41,37 +42,37 @@ int parse_single_aln(const char *filename, vector <string> & aln,
             L=sequence.length();
             is_not_gap_vec.assign(L,0);
         }
-        cov1=0;
+        Lali=0;
         for (i=0;i<L;i++)
         {
             if (aa_list.find(sequence[i])!=string::npos)
             {
-                cov1+=1;
+                Lali+=1;
                 is_not_gap_vec[i]=1;
             }
             else
                 is_not_gap_vec[i]=0;
         }
-        if (cov1<cov_cut*L) continue;
+        if (Lali<cov_cut*L) continue;
         if (id_cut>1)
         {
             aln.push_back(sequence);
         }
         else
         {
+            maxLdiff=(1.-id_cut)*Lali;
             for (n=0;n<aln.size();n++)
             {
-                seqID1=0;
-                //seqID2=0;
-                //cov2=0;
+                Ldiff=0;
+                //seqID1=0;
                 for (i=0;i<L;i++)
                 {
-                    seqID1+=(is_not_gap_vec[i])*(aln[n][i]==sequence[i]);
-                    //seqID2+=(is_not_gap_mat[n][i])*(aln[n][i]==sequence[i]);
-                    //cov2+=is_not_gap_mat[n][i];
+                    //seqID1+=(is_not_gap_vec[i])*(aln[n][i]==sequence[i]);
+                    Ldiff+=(is_not_gap_vec[i])*(aln[n][i]!=sequence[i]);
+                    if (Ldiff>maxLdiff) break;
                 }
-                //if (seqID1>id_cut*cov1 || seqID2>id_cut*cov2) break;
-                if (seqID1>id_cut*cov1) break;
+                //if (seqID1>id_cut*Lali) break;
+                if (Ldiff<=maxLdiff) break;
             }
             if (n==aln.size()) 
             {
@@ -114,7 +115,8 @@ int parse_two_aln(const char *query_filename, const char *filename,
     int query_nseqs=query_aln.size(); // number of sequences
 
     int i,n; // position, sequence index
-    int cov1,cov2; // number of non-gap positions
+    int Lali; // number of non-gap positions
+    int Ldiff=0,maxLdiff=0; // length of different positions
     float max_seqID,seqID1,seqID2; // seqID with previous sequences
     vector <int> is_not_gap_vec(L,0); // if a positions is an amino acid 
     vector<vector<int> > is_not_gap_mat; // if a position is an amino acid
@@ -124,53 +126,57 @@ int parse_two_aln(const char *query_filename, const char *filename,
     {
         getline(fp,sequence);
         if (sequence.length()==0) continue;
-        cov1=0;
+        Lali=0;
         for (i=0;i<L;i++)
         {
             if (aa_list.find(sequence[i])!=string::npos)
             {
-                cov1+=1;
+                Lali+=1;
                 is_not_gap_vec[i]=1;
             }
             else
                 is_not_gap_vec[i]=0;
         }
-        if (cov1<cov_cut*L) continue;
+        if (Lali<cov_cut*L) continue;
         if (id_cut>1)
         {
             aln.push_back(sequence);
         }
         else
         {
-            max_seqID=0;
+            //max_seqID=0;
+            maxLdiff=(1.-id_cut)*Lali;
             for (n=0;n<query_aln.size();n++)
             {
-                seqID1=0;
+                Ldiff=0;
+                //seqID1=0;
                 for (i=0;i<L;i++)
                 {
-                    seqID1+=(is_not_gap_vec[i])*(query_aln[n][i]==sequence[i]);
+                    //seqID1+=(is_not_gap_vec[i])*(query_aln[n][i]==sequence[i]);
+                    Ldiff+=(is_not_gap_vec[i])*(query_aln[n][i]!=sequence[i]);
+                    if (Ldiff>maxLdiff) break;
                 }
-                //if (seqID1>id_cut*cov1 || seqID2>id_cut*cov2) break;
-                if (seqID1>id_cut*cov1)
-                {
-                    max_seqID=seqID1;
-                    break;
-                }
+                if (Ldiff<=maxLdiff) break;
+                //if (seqID1>id_cut*Lali)
+                //{
+                    //max_seqID=seqID1;
+                    //break;
+                //}
             }
-            if (max_seqID>id_cut*cov1) continue;
+            if (Ldiff<=maxLdiff) continue;
+            //if (max_seqID>id_cut*Lali) continue;
             for (n=0;n<aln.size();n++)
             {
-                seqID1=0;
-                //seqID2=0;
-                //cov2=0;
+                Ldiff=0;
+                //seqID1=0;
                 for (i=0;i<L;i++)
                 {
-                    seqID1+=(is_not_gap_vec[i])*(aln[n][i]==sequence[i]);
-                    //seqID2+=(is_not_gap_mat[n][i])*(aln[n][i]==sequence[i]);
-                    //cov2+=is_not_gap_mat[n][i];
+                    Ldiff+=(is_not_gap_vec[i])*(aln[n][i]!=sequence[i]);
+                    //seqID1+=(is_not_gap_vec[i])*(aln[n][i]==sequence[i]);
+                    if (Ldiff>maxLdiff) break;
                 }
-                //if (seqID1>id_cut*cov1 || seqID2>id_cut*cov2) break;
-                if (seqID1>id_cut*cov1) break;
+                if (Ldiff<=maxLdiff) break;
+                //if (seqID1>id_cut*Lali) break;
             }
             if (n==aln.size()) 
             {
