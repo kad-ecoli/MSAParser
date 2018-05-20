@@ -10,3 +10,4 @@ trimMSA
 calNf
 cleanFastaHeader
 AlnAaProb
+RemoveNonQueryPosition
