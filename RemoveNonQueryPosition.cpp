@@ -23,7 +23,7 @@ int RemoveNonQueryPosition(const string infile="-", const string outfile="-")
 
     int i;
     vector <int> nongap_pos; // position not corresponding to gap in query
-    string query_sequence,no_query_gap_sequence;
+    string no_query_gap_sequence;
     while ((infile!="-")?fp_in.good():cin.good())
     {
         if (infile!="-") getline(fp_in,line);
@@ -34,13 +34,10 @@ int RemoveNonQueryPosition(const string infile="-", const string outfile="-")
         {
             if (sequence.length()>0)
             {
-                if (query_sequence.size()==0)
-                {
-                    query_sequence=sequence;
+                if (nongap_pos.size()==0)
                     for (i=0;i<sequence.size();i++)
                         if (sequence[i]!='-') 
                             nongap_pos.push_back(i);
-                }
 
                 no_query_gap_sequence.clear();
                 for (i=0;i<nongap_pos.size();i++)
@@ -59,13 +56,10 @@ int RemoveNonQueryPosition(const string infile="-", const string outfile="-")
     }
     fp_in.close();
 
-    if (query_sequence.size()==0)
-    {
-        query_sequence=sequence;
+    if (nongap_pos.size()==0)
         for (i=0;i<sequence.size();i++)
             if (sequence[i]!='-') 
                 nongap_pos.push_back(i);
-    }
 
     no_query_gap_sequence.clear();
     for (i=0;i<nongap_pos.size();i++)
@@ -76,6 +70,8 @@ int RemoveNonQueryPosition(const string infile="-", const string outfile="-")
 
     fp_out.close();
     sequence.clear();
+    nongap_pos.clear();
+    no_query_gap_sequence.clear();
     return nseqs;
 }
 
