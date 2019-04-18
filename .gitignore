@@ -11,3 +11,5 @@ calNf
 cleanFastaHeader
 AlnAaProb
 RemoveNonQueryPosition
+fasta2pfam
+pfam2fasta
