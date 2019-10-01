@@ -8,6 +8,7 @@ realignMSA
 rmRedundantSeq
 trimMSA
 calNf
+fastNf
 cleanFastaHeader
 AlnAaProb
 RemoveNonQueryPosition
