@@ -17,6 +17,7 @@ rmRedundantSeq   # remove redundant sequences and sequence fragments
 trimMSA          # remove positions with too many gaps
 cleanFastaHeader # simplify sequence name in fasta file
 calNf            # calculate Nf using GREMLIN definition
+fastNf           # pointer implement of calNf
 AlnAaProb        # calculate AA prob for each position
 fasta2pfam       # convert fasta to tab-eliminated table
 pfam2fasta       # convert the output of fasta2pfam back to fasta
