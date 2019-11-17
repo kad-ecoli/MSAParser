@@ -8,6 +8,7 @@ realignMSA
 rmRedundantSeq
 trimMSA
 calNf
+calNf_ly
 fastNf
 cleanFastaHeader
 AlnAaProb
