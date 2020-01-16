@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-O3
 LDFLAGS=-static
 
-prog=trimMSA rmRedundantSeq realignMSA fasta2aln fastaCov fastNf calNf cleanFastaHeader AlnAaProb RemoveNonQueryPosition fasta2pfam calNf_ly
+prog=trimMSA rmRedundantSeq realignMSA fasta2aln fastaCov fastNf calNf cleanFastaHeader AlnAaProb RemoveNonQueryPosition fasta2pfam calNf_ly a3m2msa
 
 all: ${prog}
 
@@ -40,6 +40,12 @@ RemoveNonQueryPosition: RemoveNonQueryPosition.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
 calNf_ly: calNf_ly.cpp
+	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
+
+a3m2msa: a3m2msa.cpp
+	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
+
+unaligna3m: unaligna3m.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
 install: ${prog}
