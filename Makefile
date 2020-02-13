@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-O3
 LDFLAGS=-static
 
-prog=trimMSA rmRedundantSeq realignMSA fasta2aln fastaCov fastNf calNf cleanFastaHeader AlnAaProb RemoveNonQueryPosition fasta2pfam calNf_ly a3m2msa
+prog=trimMSA rmRedundantSeq realignMSA fasta2aln fastaCov fastNf calNf cleanFastaHeader cleanFastaBody AlnAaProb RemoveNonQueryPosition fasta2pfam calNf_ly a3m2msa
 
 all: ${prog}
 
@@ -31,6 +31,9 @@ fastNf: fastNf.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
 cleanFastaHeader: cleanFastaHeader.cpp
+	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
+
+cleanFastaBody: cleanFastaBody.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
 AlnAaProb: AlnAaProb.cpp

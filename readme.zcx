@@ -16,6 +16,7 @@ rmRedundantSeq   # remove redundant sequences and sequence fragments
                  # for full query sequence length.
 trimMSA          # remove positions with too many gaps
 cleanFastaHeader # simplify sequence name in fasta file
+cleanFastaBody   # remove non-standard amino acid from fasta file
 calNf            # calculate Nf using GREMLIN definition
 calNf_ly         # calculate sequence weight
 fastNf           # pointer implement of calNf

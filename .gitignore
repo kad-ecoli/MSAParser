@@ -11,6 +11,7 @@ calNf
 calNf_ly
 fastNf
 cleanFastaHeader
+cleanFastaBody
 AlnAaProb
 RemoveNonQueryPosition
 fasta2pfam
