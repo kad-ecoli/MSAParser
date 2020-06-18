@@ -27,3 +27,5 @@ a3m2msa          # convert a3m format alignment to fasta format alignment
                  # without insertion states
 unaligna3m       # convert a3m format alignment to fasta format unaligned
                  # sequences without gaps
+fastaNA          # clean non-standard nucleotide in fasta
+fasta2crc64      # generate crc64 hash

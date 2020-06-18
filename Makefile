@@ -9,6 +9,9 @@ all: ${prog}
 trimMSA: trimMSA.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
+fastaNA: fastaNA.cpp
+	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
+
 rmRedundantSeq: rmRedundantSeq.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
