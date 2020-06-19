@@ -29,3 +29,4 @@ unaligna3m       # convert a3m format alignment to fasta format unaligned
                  # sequences without gaps
 fastaNA          # clean non-standard nucleotide in fasta
 fasta2crc64      # generate crc64 hash
+fastaOneLine     # convert multiline fasta into one line per sequence
