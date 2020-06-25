@@ -2,11 +2,14 @@ CC=g++
 CFLAGS=-O3
 LDFLAGS=-static
 
-prog=trimMSA rmRedundantSeq realignMSA fasta2aln fastaCov fastNf calNf cleanFastaHeader cleanFastaBody AlnAaProb RemoveNonQueryPosition fasta2pfam calNf_ly a3m2msa unaligna3m fasta2crc64 fastaOneLine
+prog=trimMSA rmRedundantSeq realignMSA fasta2aln fastaCov fastNf calNf cleanFastaHeader cleanFastaBody AlnAaProb RemoveNonQueryPosition fasta2pfam calNf_ly a3m2msa unaligna3m fasta2crc64 fastaOneLine trimBlastN
 
 all: ${prog}
 
 trimMSA: trimMSA.cpp
+	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
+
+trimBlastN: trimBlastN.cpp
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
 
 fastaNA: fastaNA.cpp
