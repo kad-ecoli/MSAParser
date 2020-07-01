@@ -20,8 +20,8 @@ using namespace std;
 string aa_list="ACDEFGHIKLMNPQRSTVWY";
 
 /* parse single MSA at seqID & coverage cutoff id_cut & cov_cut */
-int parse_single_aln(const char *filename, vector <string> & aln, 
-    const float id_cut, const float cov_cut)
+int parse_single_aln(const char *filename, vector <string> & aln,
+    vector <string> & header_list, const float id_cut, const float cov_cut)
 {
     int L=0; // alignment length
     int Ldiff=0,maxLdiff=0; // length of different positions
@@ -32,11 +32,16 @@ int parse_single_aln(const char *filename, vector <string> & aln,
     vector<vector<int> > is_not_gap_mat; // if a position is an amino acid
     ifstream fp;
     fp.open(filename,ios::in);
-    string sequence;
+    string sequence, header;
     while (fp.good())
     {
         getline(fp,sequence);
         if (sequence.length()==0) continue;
+        if (sequence[0]=='>')
+        {
+            header=sequence;
+            continue;
+        }
         if (L==0)
         {
             L=sequence.length();
@@ -53,10 +58,19 @@ int parse_single_aln(const char *filename, vector <string> & aln,
             else
                 is_not_gap_vec[i]=0;
         }
-        if (Lali<cov_cut*L) continue;
+        if (Lali<cov_cut*L)
+        {
+            if (header.size()) header.clear();
+            continue;
+        }
         if (id_cut>1)
         {
             aln.push_back(sequence);
+            if (header.size())
+            {
+                header_list.push_back(header);
+                header.clear();
+            }
         }
         else
         {
@@ -77,21 +91,27 @@ int parse_single_aln(const char *filename, vector <string> & aln,
             if (n==aln.size()) 
             {
                 aln.push_back(sequence);
+                if (header.size()) header_list.push_back(header);
                 is_not_gap_mat.push_back(is_not_gap_vec);
             }
+            if (header.size()) header.clear();
         }
     }
     fp.close();
-    is_not_gap_mat.clear();
+    
+    /* clean up */
+    sequence.clear();
+    vector <int> ().swap(is_not_gap_vec);
+    vector<vector<int> > ().swap(is_not_gap_mat);
     return aln.size();
 }
 
 /* parse second MSA at seqID & coverage cutoff id_cut & cov_cut */
 int parse_two_aln(const char *query_filename, const char *filename, 
-    vector <string> & query_aln, vector <string> & aln, 
-    const float id_cut, const float cov_cut)
+    vector <string> & query_aln, vector <string> & aln,
+    vector <string> & header_list, const float id_cut, const float cov_cut)
 {
-    string sequence;
+    string sequence, header;
     if (query_filename[0]!='-')
     {
         ifstream fp;
@@ -99,7 +119,7 @@ int parse_two_aln(const char *query_filename, const char *filename,
         while(fp.good())
         {
             getline(fp,sequence);
-            query_aln.push_back(sequence);
+            if (sequence.size() && sequence[0]!='>') query_aln.push_back(sequence);
         }
         fp.close();
     }
@@ -108,7 +128,7 @@ int parse_two_aln(const char *query_filename, const char *filename,
         while(cin.good())
         {
             getline(cin,sequence);
-            query_aln.push_back(sequence);
+            if (sequence.size() && sequence[0]!='>') query_aln.push_back(sequence);
         }
     }
     int L=query_aln[0].length(); // alignment length
@@ -126,6 +146,11 @@ int parse_two_aln(const char *query_filename, const char *filename,
     {
         getline(fp,sequence);
         if (sequence.length()==0) continue;
+        if (sequence[0]=='>')
+        {
+            header=sequence;
+            continue;
+        }
         Lali=0;
         for (i=0;i<L;i++)
         {
@@ -137,10 +162,19 @@ int parse_two_aln(const char *query_filename, const char *filename,
             else
                 is_not_gap_vec[i]=0;
         }
-        if (Lali<cov_cut*L) continue;
+        if (Lali<cov_cut*L)
+        {
+            if (header.size()) header.clear();
+            continue;
+        }
         if (id_cut>1)
         {
             aln.push_back(sequence);
+            if (header.size())
+            {
+                header_list.push_back(header);
+                header.clear();
+            }
         }
         else
         {
@@ -163,7 +197,11 @@ int parse_two_aln(const char *query_filename, const char *filename,
                     //break;
                 //}
             }
-            if (Ldiff<=maxLdiff) continue;
+            if (Ldiff<=maxLdiff)
+            {
+                if (header.size()) header.clear();
+                continue;
+            }
             //if (max_seqID>id_cut*Lali) continue;
             for (n=0;n<aln.size();n++)
             {
@@ -181,12 +219,18 @@ int parse_two_aln(const char *query_filename, const char *filename,
             if (n==aln.size()) 
             {
                 aln.push_back(sequence);
+                if (header.size()) header_list.push_back(header);
                 is_not_gap_mat.push_back(is_not_gap_vec);
             }
+            if (header.size()) header.clear();
         }
     }
     fp.close();
-    is_not_gap_mat.clear();
+    
+    /* clean up */
+    sequence.clear();
+    vector <int> ().swap(is_not_gap_vec);
+    vector<vector<int> > ().swap(is_not_gap_mat);
     return aln.size();
 }
 
@@ -205,10 +249,20 @@ int main(int argc, char **argv)
     int nseqs;
     vector <string> query_aln;
     vector <string> aln;
+    vector <string> header_list;
     if (argc<5) // one MSA
-        nseqs=parse_single_aln(argv[3],aln,id_cut,cov_cut);
+        nseqs=parse_single_aln(argv[3],aln,header_list,id_cut,cov_cut);
     else
-        nseqs=parse_two_aln(argv[3],argv[4],query_aln,aln,id_cut,cov_cut);
-    for (int n=0;n<aln.size();n++) cout<<aln[n]<<endl;
+        nseqs=parse_two_aln(argv[3],argv[4],query_aln,aln,header_list,id_cut,cov_cut);
+    for (int n=0;n<aln.size();n++)
+    {
+        if (header_list.size()>n) cout<<header_list[n]<<'\n';
+        cout<<aln[n]<<endl;
+    }
+
+    /* clean up */
+    vector<string> ().swap(query_aln);
+    vector<string> ().swap(aln);
+    vector<string> ().swap(header_list);
     return 0;
 }

@@ -200,8 +200,8 @@ void trimBlastN(const string indbfile="-", const string intabfile="-",
     }
     fp_in.close();
     getSeqTxt(acc_list, from_list, to_list, L, header, sequence, txt);
-    if (outfile!="-") fp_out<<txt<<endl;
-    else                cout<<txt<<endl;
+    if (outfile!="-") fp_out<<txt;
+    else                cout<<txt<<flush;
     fp_out.close();
     
     /* clean up */
