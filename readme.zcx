@@ -30,3 +30,4 @@ unaligna3m       # convert a3m format alignment to fasta format unaligned
 fastaNA          # clean non-standard nucleotide in fasta
 fasta2crc64      # generate crc64 hash
 fastaOneLine     # convert multiline fasta into one line per sequence
+fixAlnX          # remove unknown residue type from MSA
