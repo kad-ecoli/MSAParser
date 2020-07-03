@@ -95,6 +95,7 @@ void afa2blasttab(const string infile="-", const int L=0, const string outfile="
                 leftgap++;
                 if (leftgap>=L) break;
             }
+            if (from<=leftgap) leftgap=from-1;
             for (i=line.size()-1;i>=0;i--)
             {
                 if (line[i]!='-') break;
